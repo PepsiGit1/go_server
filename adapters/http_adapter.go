@@ -1,9 +1,7 @@
 package adapters
 
 import (
-	"fmt"
-
-	core "go_server/core/order"
+	core "go_server/core/user"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -17,16 +15,15 @@ func NewHttpOrderHandler(service core.OrderService) *HttpOrderHandler {
 	return &HttpOrderHandler{service: service}
 }
 
-func (h *HttpOrderHandler) CreateOrder(c fiber.Ctx) error {
-	var order core.Order
-	if err := c.Bind().Body(&order); err != nil {
-		fmt.Println(err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request"})
-	}
-
-	if err := h.service.CreateOrder(order); err != nil {
+func (h *HttpOrderHandler) GetAllUsers(c fiber.Ctx) error {
+	users, err := h.service.GetAllUsers()
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(order)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"data":    users,
+		"count":   len(users),
+	})
 }

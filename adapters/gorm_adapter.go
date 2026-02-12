@@ -1,7 +1,7 @@
 package adapters
 
 import (
-	core "go_server/core/order"
+	core "go_server/core/user"
 
 	"gorm.io/gorm"
 )
@@ -15,10 +15,10 @@ func NewGormOrderRepository(db *gorm.DB) core.OrderRepository {
 	return &GormOrderRepository{db: db}
 }
 
-func (r *GormOrderRepository) Save(order core.Order) error {
-	if result := r.db.Create(&order); result.Error != nil {
-		// Handle database errors
-		return result.Error
+func (r *GormOrderRepository) GetAll() ([]core.User, error) {
+	var users []core.User
+	if result := r.db.Find(&users); result.Error != nil {
+		return nil, result.Error
 	}
-	return nil
+	return users, nil
 }

@@ -13,7 +13,7 @@ func NewOrderService(repo OrderRepository) OrderService {
 }
 
 func (s *orderServiceImpl) GetAllUsers() ([]User, error) {
-	users, err := s.repo.FindAll()
+	users, err := s.repo.GetAll()
 	if err != nil {
 		return nil, err
 	}

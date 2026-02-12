@@ -8,12 +8,16 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-var DB *sql.DB
+var (
+	DB     *sql.DB  // Raw SQL database connection
+	GormDB *gorm.DB // GORM database instance
+)
 
-// InitDB initializes the database connection using environment variables
-func InitDB() (*sql.DB, error) {
+func InitDB() (*gorm.DB, error) {
 	// Load .env file
 	if err := godotenv.Load(); err != nil {
 		log.Println("Warning: .env file not found, using system environment variables")
@@ -26,23 +30,28 @@ func InitDB() (*sql.DB, error) {
 	password := getEnv("PG_PASSWORD", "1234")
 	dbname := getEnv("PG_DB", "postgres")
 
-	// Connection string
-	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+	// Build PostgreSQL DSN
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 
-	// Open a connection
-	db, err := sql.Open("postgres", psqlInfo)
+	// Initialize GORM with PostgreSQL
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return nil, fmt.Errorf("error opening database: %w", err)
-	}
-
-	// Check the connection
-	if err = db.Ping(); err != nil {
-		return nil, fmt.Errorf("error connecting to database: %w", err)
+		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
 	log.Println("Successfully connected to PostgreSQL database!")
-	DB = db
+
+	// Store GORM instance globally
+	GormDB = db
+
+	// Get underlying SQL database for connection pooling
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get database instance: %w", err)
+	}
+	DB = sqlDB
+
 	return db, nil
 }
 
