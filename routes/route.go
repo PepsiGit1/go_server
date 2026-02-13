@@ -7,9 +7,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
-// SetupRoutes configures all application routes (Base Router)
-func SetupRoutes(app *fiber.App, orderHandler *adapters.HttpOrderHandler) {
-	// Health check / Root route
+func SetupRoutes(app *fiber.App, userHandler *adapters.HttpUserHandler) {
 	app.Get("/api", func(c fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"message": "Welcome to Go Server API",
@@ -19,5 +17,5 @@ func SetupRoutes(app *fiber.App, orderHandler *adapters.HttpOrderHandler) {
 	})
 
 	// Setup module-specific routes
-	userRoutes.SetupUserRoutes(app, orderHandler)
+	userRoutes.SetupUserRoutes(app, userHandler)
 }

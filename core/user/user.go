@@ -3,25 +3,24 @@ package core
 import (
 	"time"
 
-	"gorm.io/gorm"
+	"github.com/google/uuid"
 )
 
 type User struct {
-	gorm.Model
-	ID         string    `gorm:"column:id;primaryKey" json:"id"`
-	Email      string    `gorm:"column:email" json:"email"`
-	Name       string    `gorm:"column:name" json:"name"`
-	Phone      string    `gorm:"column:phone" json:"phone"`
-	Address    string    `gorm:"column:address" json:"address"`
-	Province   string    `gorm:"column:province" json:"province"`
-	District   string    `gorm:"column:district" json:"district"`
-	Image      string    `gorm:"column:image" json:"image"`
-	IsActive   bool      `gorm:"column:isActive" json:"isActive"`
-	IsVerified bool      `gorm:"column:isVerified" json:"isVerified"`
-	Password   string    `gorm:"column:password" json:"password"`
-	Role       string    `gorm:"column:role" json:"role"`
-	CreatedAt  time.Time `gorm:"column:createdAt" json:"createdAt"`
-	Village    string    `gorm:"column:village" json:"village"`
+	ID         uuid.UUID  `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
+	Email      string     `json:"email"`
+	Name       string     `json:"name"`
+	Phone      string     `json:"phone"`
+	Address    string     `json:"address"`
+	Province   string     `json:"province"`
+	District   string     `json:"district"`
+	Image      *string    `json:"image,omitempty"` // nullable
+	IsActive   bool       `json:"isActive"`
+	IsVerified bool       `json:"isVerified"`
+	Password   string     `json:"password"`
+	Role       string     `json:"role"`
+	CreatedAt  *time.Time `json:"createdAt,omitempty"` // optional
+	Village    *string    `json:"village,omitempty"`   // optional
 }
 
 // TableName overrides the default table name to use the existing "User" table

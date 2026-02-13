@@ -28,9 +28,9 @@ func main() {
 	}
 
 	// Set up the core service and adapters
-	userRepo := adapters.NewGormOrderRepository(db)
-	orderService := core.NewOrderService(userRepo)
-	orderHandler := adapters.NewHttpOrderHandler(orderService)
+	userRepo := adapters.NewGormUserRepository(db)
+	orderService := core.NewUserService(userRepo)
+	orderHandler := adapters.NewHttpUserHandler(orderService)
 
 	// Setup routes
 	routes.SetupRoutes(app, orderHandler)
